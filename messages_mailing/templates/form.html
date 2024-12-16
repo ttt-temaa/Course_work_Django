@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}MahiruStore - {% if messagess %}Редактирование сообщение{% else %}Создание сообщение{% endif %}{% endblock %}
+
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">{% if messagess %}Редактирование сообщение{% else %}Создание сообщение{% endif %}</h1>
+</div>
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        {% if messagess %}
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a href="{% url 'messages' %}" class="btn btn-secondary">Отмена</a>
+        {% else %}
+            <button type="submit" class="btn btn-primary">Добавить</button>
+            <a href="{% url 'messages' %}" class="btn btn-secondary">Назад</a>
+        {% endif %}
+    </form>
+</div>
+{% include 'includes/toast.html'%}
+{% endblock %}

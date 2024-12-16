@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}MahiruStore - Получатели{% endblock %}
+
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Получатели</h1>
+    <a href="{% url 'recipient_new' %}" class="btn btn-primary">Добавить получателя</a>
+</div>
+<div class="container">
+    <div class="row">
+        {% if recipients %}
+        <div>
+            <h2>Список получателей</h2>
+            <p>Всего получателей: {{ recipients|length }}</p>
+        </div>
+        <div class="col-4">
+            <div class="list-group" id="list-tab" role="tablist">
+                {% for recipient in recipients %}
+                <a class="list-group-item list-group-item-action" id="list-{{ recipient.id }}-list" data-bs-toggle="list" href="#list-{{ recipient.id }}" role="tab" aria-controls="list-{{ recipient.id }}">{{ recipient.email }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="tab-content" id="nav-tabContent">
+                {% for recipient in recipients %}
+                <div class="tab-pane fade" id="list-{{ recipient.id }}" role="tabpanel" aria-labelledby="list-{{ recipient.id }}-list">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="mb-1 text-muted card-title">Получатель</h5>
+                            <hr class="my-2">
+                            <h3 class="card-title">{{ recipient.email }}</h3>
+                            <p class="card-text mb-1">ФИО: {{ recipient.full_name }}</p>
+                            <p class="card-text">Комментарий: {{ recipient.comment }}</p>
+                            <hr>
+                            <a href="{% url 'recipient_edit' recipient.id %}" class="btn btn-primary">Редактировать</a>
+                            <form action="{% url 'recipient_delete' recipient.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <h1 class="text-center my-5">Нет получателей</h1>
+        {% endif %}
+    </div>
+</div>
+{% include 'includes/toast.html'%}
+{% include 'includes/script_list.html' %}
+{% endblock %}
