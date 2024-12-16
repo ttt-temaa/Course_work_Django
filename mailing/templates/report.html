@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}MahiruStore - Отчёт{% endblock %}
+
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Отчёт о рассылке {{ mailing.id }}</h1>
+</div>
+<div class="container">
+    <div class="row">
+        {% if attempts %}
+        <div>
+            <h2>Список отчёта</h2>
+            <p class="text-muted mb-0">Всего попыток отправки: {{ attempts|length }}</p>
+            <p class="text-muted mb-0">Всего успешных отправок: {{ success_count }}</p>
+            <p class="text-muted">Всего неудачных отправок: {{ failure_count }}</p>
+            <a href="{% url 'mailings' %}#list-{{ mailing.id }}" class="btn btn-primary">Назад</a>
+
+        </div>
+        <div class="col-4 mt-3">
+            <div class="list-group" id="list-tab" role="tablist">
+                {% for attempt in attempts %}
+                <a class="list-group-item list-group-item-action" id="list-{{ attempt.id }}-list" data-bs-toggle="list" href="#list-{{ attempt.id }}" role="tab" aria-controls="list-{{ attempt.id }}">
+                    Попытка отправки - 
+                    {% if attempt.status == 'SUCCESS' %}
+                    <span class="text-success">Успешно</span>
+                    {% else %}
+                    <span class="text-danger">Неудачно</span>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-8 mt-3">
+            <div class="tab-content" id="nav-tabContent">
+                {% for attempt in attempts %}
+                <div class="tab-pane fade" id="list-{{ attempt.id }}" role="tabpanel" aria-labelledby="list-{{ attempt.id }}-list">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="mb-1 text-muted card-title">
+                                {% if attempt.status == 'SUCCESS' %}
+                                <span class="text-success">Успешно</span>
+                                {% else %}
+                                <span class="text-danger">Неудачно</span>
+                                {% endif %}
+                            </h5>
+                            <hr class="my-2">
+                            <p class="card-text mb-1">Время отправки: <b>{{ attempt.attempt_time }}</b></p>
+                            <p class="card-text">Ответ сервера: <b>{{ attempt.response }}</b></p>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center">
+            <h1 class="text-center my-5">Нет отчёта</h1>
+            <a href="{% url 'mailings' %}#list-{{ mailing.id }}" class="btn btn-primary w-25">Назад</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% include 'includes/toast.html' %}
+{% include 'includes/script_list.html' %}
+{% endblock %}

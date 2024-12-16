@@ -1,0 +1,40 @@
+{% if messages %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        {% for message in messages %}
+            <div class="toast align-items-center text-bg-{{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <!-- Полоска прогресса Bootstrap -->
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-{{ message.tags }}" role="progressbar" style="width: 100%; transition: width 5s linear;"></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Инициализируем Toasts и запустим анимацию прогресса
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function (toastEl) {
+                // Запуск Bootstrap Toast
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+
+                // Запуск анимации прогресс-бара
+                var progressBar = toastEl.querySelector('.progress-bar');
+                if (progressBar) {
+                    setTimeout(() => {
+                        progressBar.style.width = '0%';
+                    }, 100);  // Небольшая задержка для плавного запуска анимации
+                }
+
+                return toast;
+            });
+        });
+    </script>
+{% endif %}

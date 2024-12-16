@@ -1,0 +1,32 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Получаем значение хэша URL
+        var hash = window.location.hash;
+
+        // Проверяем, что хэш существует и начинается с #list-
+        if (hash && hash.startsWith("#list-")) {
+            // Получаем ID элемента вкладки по хэшу
+            var tabId = hash.substring(1);
+
+            // Находим элемент вкладки и активируем его
+            var tab = document.getElementById(tabId + "-list");
+            if (tab) {
+                tab.classList.add("active", "show");
+                var tabContent = document.getElementById(tabId);
+                if (tabContent) {
+                    tabContent.classList.add("active", "show");
+                }
+
+                // Убираем активность у текущей вкладки, если она есть
+                var activeTab = document.querySelector('.list-group-item.active');
+                if (activeTab && activeTab.id !== tab.id) {
+                    activeTab.classList.remove("active", "show");
+                    var activeTabContent = document.querySelector('.tab-pane.active');
+                    if (activeTabContent) {
+                        activeTabContent.classList.remove("active", "show");
+                    }
+                }
+            }
+        }
+    });
+</script>
