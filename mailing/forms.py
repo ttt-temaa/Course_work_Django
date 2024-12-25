@@ -1,32 +1,37 @@
-from django import forms
+from django.forms import BooleanField, ImageField, ModelForm
+from django.urls import reverse_lazy
 
-from .models import Mailing
+from mailing.models import Mailing, Message, RecipientMailing
 
 
-class MailingForm(forms.ModelForm):
-    class Meta:
-        model = Mailing
-        fields = ["start_time", "end_time", "message", "recipients"]
-        widgets = {
-            "start_time": forms.DateTimeInput(
-                attrs={"class": "form-control", "type": "datetime-local", "placeholder": "Дата и время начала"}
-            ),
-            "end_time": forms.DateTimeInput(
-                attrs={"class": "form-control", "type": "datetime-local", "placeholder": "Дата и время окончания"}
-            ),
-            "recipients": forms.CheckboxSelectMultiple(
-                attrs={
-                    "type": "checkbox",
-                    "placeholder": "Получатели",
-                }
-            ),
-        }
-
+class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            if field_name == "recipients":
-                continue
-            field.widget.attrs["class"] = "form-control"
-            field.widget.attrs["placeholder"] = field.label
-            field.widget.attrs["required"] = True
+        for fild_name, fild in self.fields.items():
+            if isinstance(fild, BooleanField):
+                fild.widget.attrs["class"] = "form-check-input"
+            elif isinstance(fild, ImageField):
+                fild.widget.attrs["class"] = "form-control-file"
+            else:
+                fild.widget.attrs["class"] = "form-control"
+
+
+class MailingForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = Mailing
+        fields = "__all__"
+        success_url = reverse_lazy("mailing:mailing_list")
+
+
+class RecipientForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = RecipientMailing
+        fields = "__all__"
+        success_url = reverse_lazy("mailing:recipientmailing_list")
+
+
+class MessageForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = Message
+        fields = "__all__"
+        success_url = reverse_lazy("mailing:message_list")

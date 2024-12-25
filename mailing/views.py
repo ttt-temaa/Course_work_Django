@@ -1,134 +1,232 @@
-from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.mail import send_mail
-from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
+
 from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from .forms import MailingForm
-from .models import Mailing, MailingAttempt
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
-
-class MailingListView(ListView):
-    model = Mailing
-    template_name = "mailing/list.html"
-    context_object_name = "mailings"
-
-    def get_queryset(self):
-        if self.request.user.has_perm("mailings.view_all_mailings"):
-            return Mailing.objects.all()
-        return Mailing.objects.filter(owner=self.request.user)
+from mailing.forms import MailingForm, MessageForm, RecipientForm
+from mailing.models import Mailing, MailingAttempt, Message, RecipientMailing
 
 
-class MailingCreateView(LoginRequiredMixin, CreateView):
-
-    form_class = MailingForm
-    template_name = "mailing/form.html"
-    success_url = reverse_lazy("mailings")
-
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
-
-
-class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    model = Mailing
-    form_class = MailingForm
-    template_name = "mailing/form.html"
-    success_url = reverse_lazy("mailings")
-    permission_required = "mailing.change_mailing"
-
-    def has_permission(self):
-        return super().has_permission() or self.request.user == self.get_object().owner
-
-    def get_queryset(self):
-        return Mailing.objects.filter(owner=self.request.user)
-
-    def form_valid(self, form):
-        form.instance.status = "CREATED"
-        return super().form_valid(form)
-
-
-class MailingDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    model = Mailing
-    success_url = reverse_lazy("mailings")
-    permission_required = "mailing.delete_mailing"
-
-    def has_permission(self):
-        return super().has_permission() or self.request.user == self.get_object().owner
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "Рассылка успешно удалена!")
-        return super().delete(request, *args, **kwargs)
-
-
-class MailingReportView(LoginRequiredMixin, DetailView):
-    model = Mailing
-    template_name = "mailing/report.html"
-    context_object_name = "mailing"
-
-    def get_queryset(self):
-        if self.request.user.has_perm("mailings.view_all_mailings"):
-            return Mailing.objects.all()
-        return Mailing.objects.filter(owner=self.request.user)
+class IndexView(TemplateView):
+    template_name = "mailing/index.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        mailing = self.get_object()
-        attempts = MailingAttempt.objects.filter(mailing=mailing)
-        context["attempts"] = attempts
-        context["success_count"] = attempts.filter(status="SUCCESS").count()
-        context["failure_count"] = attempts.filter(status="FAILURE").count()
-        return context
+        context_data = super().get_context_data(**kwargs)
+        context_data["title"] = "Главная"
+        context_data["count_mailing"] = len(Mailing.objects.all())
+        active_mailings_count = Mailing.objects.filter(status="Запущена").count()
+        context_data["active_mailings_count"] = active_mailings_count
+        unique_clients_count = RecipientMailing.objects.distinct().count()
+        context_data["unique_clients_count"] = unique_clients_count
+        return context_data
 
 
-class SendMailingView(LoginRequiredMixin, View):
+class MailingListView(LoginRequiredMixin, ListView):
+    model = Mailing
 
-    def post(self, request, pk):
-        # Получаем объект рассылки
-        mailing = Mailing.objects.get(pk=pk, owner=request.user)
-        message = mailing.message
-        recipients = mailing.recipients.all()
-        response = None
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.is_superuser or self.request.user.groups.filter(name="Менеджеры").exists():
+            return super().get_queryset()
+        elif self.request.user.groups.filter(name="Пользователи").exists():
+            return super().get_queryset().filter(owner=self.request.user)
+        raise PermissionDenied
 
-        # Отправляем сообщения каждому получателю
-        for recipient in recipients:
-            try:
-                send_mail(
-                    message.subject,
-                    message.body,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [recipient.email],
-                )
-                MailingAttempt.objects.create(
-                    status="SUCCESS", response=f"Успешно отправлено на {recipient.email}", mailing=mailing
-                )
-            except Exception as e:
-                response = f"Письмо не отправлено на {recipient.email}: {e}"
-                MailingAttempt.objects.create(status="FAILURE", response=response, mailing=mailing)
-        # Отправляем сообщение об успехе и перенаправляем
-        if MailingAttempt.objects.filter(mailing=mailing).order_by("-attempt_time").first().status == "SUCCESS":
-            messages.success(request, f"Письмо успешно отправлено на {recipient.email}")
+
+class MailingDetailView(LoginRequiredMixin, DetailView):
+    model = Mailing
+    form_class = MailingForm
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user.groups.filter(name="Менеджеры") or self.request.user.is_superuser:
+            return self.object
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class MailingCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Mailing
+    form_class = MailingForm
+    success_url = reverse_lazy("mailing:mailing_list")
+
+    def form_valid(self, form):
+        recipient = form.save()
+        recipient.owner = self.request.user
+        recipient.save()
+        return super().form_valid(form)
+
+    def test_func(self):
+        return self.request.user.groups.filter(name="Пользователи").exists() or self.request.user.is_superuser
+
+
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
+    model = Mailing
+    form_class = MailingForm
+    success_url = reverse_lazy("mailing:mailing_list")
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class MailingDeleteView(LoginRequiredMixin, DeleteView):
+    model = Mailing
+    success_url = reverse_lazy("mailing:mailing_list")
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class RecipientMailingListView(ListView):
+    model = RecipientMailing
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["title"] = "Получатели"
+        return context_data
+
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.is_superuser or self.request.user.groups.filter(name="Менеджеры"):
+            return super().get_queryset()
+        elif self.request.user.groups.filter(name="Пользователи"):
+            return super().get_queryset().filter(owner=self.request.user)
+        raise PermissionDenied
+
+
+class RecipientMailingDetailView(LoginRequiredMixin, DetailView):
+    model = RecipientMailing
+    form_class = RecipientForm
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user.is_superuser or self.request.user.groups.filter(name="Менеджеры"):
+            return self.object
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class RecipientMailingCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = RecipientMailing
+    form_class = RecipientForm
+    success_url = reverse_lazy("mailing:recipientmailing_list")
+
+    def form_valid(self, form):
+        recipient = form.save()
+        recipient.owner = self.request.user
+        recipient.save()
+        return super().form_valid(form)
+
+    def test_func(self):
+        return self.request.user.groups.filter(name="Пользователи").exists() or self.request.user.is_superuser
+
+
+class RecipientMailingUpdateView(LoginRequiredMixin, UpdateView):
+    model = RecipientMailing
+    form_class = RecipientForm
+    success_url = reverse_lazy("mailing:recipientmailing_list")
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class RecipientMailingDeleteView(LoginRequiredMixin, DeleteView):
+    model = RecipientMailing
+    success_url = reverse_lazy("mailing:recipientmailing_list")
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class MessageListView(ListView):
+    model = Message
+
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.is_superuser:
+            return super().get_queryset()
         else:
-            messages.warning(request, response)
-        mailing.status = "FINISHED"
-        mailing.save()
-        return redirect("mailings")
+            raise PermissionDenied
 
 
-class MailingStartView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        mailing = Mailing.objects.get(pk=pk)
-        mailing.status = "STARTED"
-        mailing.save()
-        return redirect("mailings")
+class MessageDetailView(LoginRequiredMixin, DetailView):
+    model = Message
+    form_class = MessageForm
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
-class MailingStopView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        mailing = Mailing.objects.get(pk=pk)
-        mailing.status = "CREATED"
-        mailing.save()
-        return redirect("mailings")
+class MessageCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Message
+    form_class = MessageForm
+    success_url = reverse_lazy("mailing:message_list")
+
+    def form_valid(self, form):
+        recipient = form.save()
+        recipient.owner = self.request.user
+        recipient.save()
+        return super().form_valid(form)
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
+    model = Message
+    form_class = MessageForm
+    success_url = reverse_lazy("mailing:message_list")
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
+    model = Message
+    success_url = reverse_lazy("mailing:message_list")
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class MailingAttemptCreateView(LoginRequiredMixin, CreateView):
+    model = MailingAttempt
+
+    def form_valid(self, form):
+        recipient = form.save()
+        recipient.owner = self.request.user
+        recipient.save()
+        return super().form_valid(form)
+
+
+class MailingAttemptListView(LoginRequiredMixin, ListView):
+    model = MailingAttempt
+
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.is_superuser:
+            return super().get_queryset()
+        elif self.request.user.groups.filter(name="Пользователи").exists():
+            return super().get_queryset().filter(owner=self.request.user)
+        raise PermissionDenied
