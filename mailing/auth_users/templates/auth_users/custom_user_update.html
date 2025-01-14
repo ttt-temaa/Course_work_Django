@@ -1,0 +1,17 @@
+<!--user_update-->
+{% extends 'mailing_service/base.html' %}
+
+{% block title %} Изменить профиль {% endblock %}
+
+{% block content %}
+
+<div class="container" style="margin-top:20px">
+    <form class="form-control border" style="width: 600px" method="post" enctype="multipart/form-data">
+        <h5 class="text-center border-bottom pb-2">Изменить профиль</h5>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mt-2">Сохранить</button>
+    </form>
+</div>
+{% endblock %}

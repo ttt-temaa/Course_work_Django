@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Приложение рассылок{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css"/>
+    <style>
+        .high {
+            height: 100vh;
+        }
+        .margin-top-main {
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+<h1 class="text-center margin-top-main mb-5">Mailing Service</h1>
+<div class="text-center">
+    <p>Мы приветствуем вас на нашем сайте!</p>
+    <p> Для использования навигации по сайту и возможности отправки писем необходимо
+        <a href="{% url 'auth_users:login_views' %}" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+            авторизоваться
+        </a> или
+        <a href="{% url 'auth_users:register_views' %}" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+            зарегистрироваться
+        </a>, если вы этого ещё не сделали.
+    </p>
+</div>
+<script src="/static/js/bootstrap.bundle.min.js">
+</script>
+</body>
+</html>

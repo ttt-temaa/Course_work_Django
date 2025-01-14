@@ -1,0 +1,35 @@
+<!--list_users-->
+{% extends 'mailing_service/base.html' %}
+
+{% block title %} Пользователи {% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h2>Пользователи</h2>
+</div>
+<ol class="list-group list-group-numbered">
+    {% for user in users %}
+    {% if user.is_active == True %}
+    <li class="list-group-item"> {{user.username}} - {{user.email}}
+        <form method="post" action="{% url 'auth_users:block_user_views' user.id %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-danger"
+                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                    type="submit">заблокировать
+            </button>
+        </form>
+    </li>
+    {% else %}
+    <li class="list-group-item"> {{user.username}} - {{user.email}}
+        <form method="post" action="{% url 'auth_users:unblock_user_views' user.id %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-success"
+                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                    type="submit">разблокировать
+            </button>
+        </form>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ol>
+{% endblock %}

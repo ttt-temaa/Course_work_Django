@@ -1,0 +1,26 @@
+{% extends "mailing_service/base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="row text-center mt-5">
+    <div>
+        {% if user.avatar %}
+        <img src="{{ user.avatar.url }}"
+             class="rounded mt-2" alt="Изображение" width="200" height="200">
+        {% else %}
+        <img src="#"
+             class="rounded mt-2" alt="Ваша фотография" width="200" height="200">
+        {% endif %}
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Номер телефона: {{ user.phone_number }}</p>
+        <p>Страна: {{ user.country }}</p>
+        <p>Всего попыток рассылки: {{ user.total_attempt }}</p>
+        <p>Успешных попыток рассылки: {{ user.successful_attempt }}</p>
+        <p>Неуспешных попыток рассылки: {{ user.unsuccessful_attempt }}</p>
+        <a href="{% url 'auth_users:custom_user_update_views' user.pk %}" class="btn btn-outline-secondary">Редактировать</a>
+    </div>
+
+</div>
+{% endblock %}
