@@ -1,0 +1,91 @@
+[
+{
+    "model": "mailing.mailing",
+    "pk": 24,
+    "fields": {
+        "first_send_at": "2024-12-18T17:30:28Z",
+        "finish_send_at": "2024-12-19T17:30:28Z",
+        "status": "created",
+        "owner": 5,
+        "message": 13,
+        "recipients": [
+            6
+        ]
+    }
+},
+{
+    "model": "mailing.mailing",
+    "pk": 25,
+    "fields": {
+        "first_send_at": "2024-12-18T15:37:18Z",
+        "finish_send_at": "2024-12-19T17:37:18Z",
+        "status": "running",
+        "owner": 1,
+        "message": 10,
+        "recipients": [
+            3,
+            5
+        ]
+    }
+},
+{
+    "model": "mailing.mailing",
+    "pk": 26,
+    "fields": {
+        "first_send_at": "2024-12-18T15:37:18Z",
+        "finish_send_at": "2024-12-19T17:37:18Z",
+        "status": "running",
+        "owner": 1,
+        "message": 14,
+        "recipients": [
+            4
+        ]
+    }
+},
+{
+    "model": "mailing.mailing",
+    "pk": 27,
+    "fields": {
+        "first_send_at": "2024-12-18T15:37:18Z",
+        "finish_send_at": "2024-12-19T17:37:18Z",
+        "status": "running",
+        "owner": 1,
+        "message": 12,
+        "recipients": [
+            5,
+            6
+        ]
+    }
+},
+{
+    "model": "mailing.mailing",
+    "pk": 28,
+    "fields": {
+        "first_send_at": "2024-12-18T15:37:18Z",
+        "finish_send_at": "2024-12-19T17:37:18Z",
+        "status": "running",
+        "owner": 1,
+        "message": 11,
+        "recipients": [
+            3,
+            5,
+            6
+        ]
+    }
+},
+{
+    "model": "mailing.mailing",
+    "pk": 29,
+    "fields": {
+        "first_send_at": "2024-12-18T15:37:18Z",
+        "finish_send_at": "2024-12-19T17:37:18Z",
+        "status": "running",
+        "owner": 1,
+        "message": 13,
+        "recipients": [
+            4,
+            5
+        ]
+    }
+}
+]

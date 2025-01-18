@@ -1,0 +1,52 @@
+[
+{
+    "model": "mailing.recipient",
+    "pk": 1,
+    "fields": {
+        "email": "markberezhnoy27@gmail.com",
+        "full_name": "ГУАКАМОЛЕ",
+        "comment": "яяю..я.я..ууюя.яяууя.ую.я.юу.я.у",
+        "owner": null
+    }
+},
+{
+    "model": "mailing.recipient",
+    "pk": 3,
+    "fields": {
+        "email": "m.fedyayev.02@mail.ru",
+        "full_name": "Федяев Михаил Сергеевич",
+        "comment": "легенда",
+        "owner": 1
+    }
+},
+{
+    "model": "mailing.recipient",
+    "pk": 4,
+    "fields": {
+        "email": "m.fedyayev.022@mail.ru",
+        "full_name": "Фейк почта",
+        "comment": "для проверки на ошибки",
+        "owner": 1
+    }
+},
+{
+    "model": "mailing.recipient",
+    "pk": 5,
+    "fields": {
+        "email": "w1901@internet.ru",
+        "full_name": "Матизов Тихон Сергеевич",
+        "comment": "кабан",
+        "owner": 1
+    }
+},
+{
+    "model": "mailing.recipient",
+    "pk": 6,
+    "fields": {
+        "email": "paramonov.zhenya@gmail.com",
+        "full_name": "Парамонов Евгений Олегович",
+        "comment": "женёк",
+        "owner": 1
+    }
+}
+]

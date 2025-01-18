@@ -1,0 +1,182 @@
+[
+{
+    "model": "mailing.mailingattempt",
+    "pk": 71,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:34.004Z",
+        "status": "success",
+        "mail_server_response": "m.fedyayev.02@mail.ru: Успешно отправлено",
+        "mailing": 25
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 72,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:34.007Z",
+        "status": "success",
+        "mail_server_response": "m.fedyayev.02@mail.ru: Успешно отправлено",
+        "mailing": 25
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 73,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:35.352Z",
+        "status": "success",
+        "mail_server_response": "w1901@internet.ru: Успешно отправлено",
+        "mailing": 25
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 74,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:35.354Z",
+        "status": "success",
+        "mail_server_response": "w1901@internet.ru: Успешно отправлено",
+        "mailing": 25
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 75,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:36.138Z",
+        "status": "failure",
+        "mail_server_response": "m.fedyayev.022@mail.ru: Ошибка: (550, b'Message was not accepted -- invalid mailbox.  Local mailbox m.fedyayev.022@mail.ru is unavailable: user not found')",
+        "mailing": 26
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 76,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:37.822Z",
+        "status": "success",
+        "mail_server_response": "w1901@internet.ru: Успешно отправлено",
+        "mailing": 27
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 77,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:37.824Z",
+        "status": "success",
+        "mail_server_response": "w1901@internet.ru: Успешно отправлено",
+        "mailing": 27
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 78,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:38.931Z",
+        "status": "success",
+        "mail_server_response": "paramonov.zhenya@gmail.com: Успешно отправлено",
+        "mailing": 27
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 79,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:38.934Z",
+        "status": "success",
+        "mail_server_response": "paramonov.zhenya@gmail.com: Успешно отправлено",
+        "mailing": 27
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 80,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:40.057Z",
+        "status": "success",
+        "mail_server_response": "m.fedyayev.02@mail.ru: Успешно отправлено",
+        "mailing": 28
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 81,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:40.059Z",
+        "status": "success",
+        "mail_server_response": "m.fedyayev.02@mail.ru: Успешно отправлено",
+        "mailing": 28
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 82,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:41.226Z",
+        "status": "success",
+        "mail_server_response": "w1901@internet.ru: Успешно отправлено",
+        "mailing": 28
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 83,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:41.228Z",
+        "status": "success",
+        "mail_server_response": "w1901@internet.ru: Успешно отправлено",
+        "mailing": 28
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 84,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:42.385Z",
+        "status": "success",
+        "mail_server_response": "paramonov.zhenya@gmail.com: Успешно отправлено",
+        "mailing": 28
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 85,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:42.386Z",
+        "status": "success",
+        "mail_server_response": "paramonov.zhenya@gmail.com: Успешно отправлено",
+        "mailing": 28
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 86,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:43.207Z",
+        "status": "failure",
+        "mail_server_response": "m.fedyayev.022@mail.ru: Ошибка: (550, b'Message was not accepted -- invalid mailbox.  Local mailbox m.fedyayev.022@mail.ru is unavailable: user not found')",
+        "mailing": 29
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 87,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:44.416Z",
+        "status": "success",
+        "mail_server_response": "w1901@internet.ru: Успешно отправлено",
+        "mailing": 29
+    }
+},
+{
+    "model": "mailing.mailingattempt",
+    "pk": 88,
+    "fields": {
+        "attempted_at": "2024-12-18T15:40:44.418Z",
+        "status": "success",
+        "mail_server_response": "w1901@internet.ru: Успешно отправлено",
+        "mailing": 29
+    }
+}
+]
