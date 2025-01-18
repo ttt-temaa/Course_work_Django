@@ -1,6 +1,6 @@
 from django.db import models
 
-from auth_users.models import CustomUser
+from mailing.auth_users.models import CustomUser
 
 
 # Create your models here.
