@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from mailing.mailing_service import views
 
 app_name = "mailing_service"
 
