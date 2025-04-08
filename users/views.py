@@ -38,7 +38,7 @@ class RegisterView(CreateView):
             subject="Подтверждение почты",
             message=f"Приветствуем вас на нашем сайте! Перейдите по ссылке для подтверждения эл. почты {url}",
             from_email=DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],)
+            recipient_list=[user.email], )
         return super().form_valid(form)
 
 

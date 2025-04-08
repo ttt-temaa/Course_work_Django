@@ -31,7 +31,7 @@
             <td>{{ mailing.first_send_at }}</td>
             <td>{{ mailing.finish_send_at }}</td>
             <td>{{ mailing.status }}
-            {% if mailing.owner == user or is_manager %}
+                {% if mailing.owner == user or is_manager %}
                 {% if mailing.status != "completed" %}
                 <form action="{% url 'mailing:mailing_stop' mailing.pk %}" method="post">
                     {% csrf_token %}
@@ -53,7 +53,8 @@
             <td class="text-end">
                 {% if mailing.owner == user %}
 
-                <a class="btn btn-outline-primary" href="{% url 'mailing:mailing_detail' mailing.pk%}">Разослать вручную</a>
+                <a class="btn btn-outline-primary" href="{% url 'mailing:mailing_detail' mailing.pk%}">Разослать
+                    вручную</a>
 
                 <a class="btn btn-outline-primary" href="{% url 'mailing:mailing_update' mailing.pk%}">Изменить</a>
                 <a class="btn btn-outline-danger" href="{% url 'mailing:mailing_delete' mailing.pk%}">Удалить</a>
