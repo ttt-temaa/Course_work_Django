@@ -9,6 +9,7 @@ from datetime import timedelta
 
 class Command(BaseCommand):
     """Функция для отправки рассылок."""
+
     def handle(self, *args, **kwargs):
         time_threshold_start = now() - timedelta(hours=20)
         time_threshold_end = now()

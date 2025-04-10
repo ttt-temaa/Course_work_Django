@@ -13,7 +13,6 @@
 
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <!-- Выводим каждое поле формы в отдельном параграфе -->
     {{ form.as_p }}
 
     {% if object %}
