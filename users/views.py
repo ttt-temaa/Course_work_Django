@@ -6,9 +6,10 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, View
 from django.views.generic.edit import CreateView
 from config.settings import DEFAULT_FROM_EMAIL
-from .forms import CustomUserCreationForm
 from .models import CustomUser
 from django.http import HttpResponseForbidden
+from django.views.generic import DetailView, UpdateView
+from .forms import CustomUserCreationForm
 
 
 class UserListView(LoginRequiredMixin, ListView):
@@ -58,3 +59,22 @@ def email_verification(request, token):
     user.is_active = True
     user.save()
     return redirect(reverse("users:login"))
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = CustomUser
+    template_name = "users/profile.html"
+    context_object_name = "user_profile"
+
+    def get_object(self):
+        return self.request.user
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserCreationForm
+    template_name = "users/edit_profile.html"
+    success_url = reverse_lazy("users:profile")
+
+    def get_object(self):
+        return self.request.user
